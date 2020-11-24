@@ -18,14 +18,14 @@ Go in to a restaurant, sit down at a table, and scan the QR code on the table. T
 
 Lettings customers find their own seat and order their own food without anything delivered to them, reduces my staff costs. When a dish is no longer available, I can notify the backend and the customers will no longer be able to order that dish.
 
-## UI Screens
+### UI Screens
 
 - QR code scanner
 - Display menu
 - Add dishes to order
 - (extra) Pay for meal
 
-## Features
+### Features
 
 - Camera API to read QR code to know where to fetch menu data
 - Persistent Storage using Firebase to store menu data of the dishes
