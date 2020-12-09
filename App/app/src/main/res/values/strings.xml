@@ -9,4 +9,8 @@
     <string name="total_text">Total: %.2f €</string>
 
     <string name="food_image_content_description">Image of food</string>
+
+    <string name="order_details_activity_title">My order</string>
+    <string name="order_details_order_button_text">ORDER</string>
+    <string name="order_details_cancel_button_text">Cancel</string>
 </resources>

@@ -5,4 +5,6 @@
     <dimen name="food_item_image_size">48dp</dimen>
     <dimen name="food_item_element_margin">8dp</dimen>
     <dimen name="food_item_button_size">40dp</dimen>
+    <dimen name="order_details_bottom_bar_element_margin">8dp</dimen>
+    <dimen name="order_details_total_text_margin">8dp</dimen>
 </resources>
