@@ -8,27 +8,17 @@ import ee.ut.gimmefood.data.Food
 import ee.ut.gimmefood.shopping.ShoppingAdapter
 
 class MainActivity : AppCompatActivity() {
-    var foodList: MutableList<Food> = mutableListOf()
+    lateinit var database: MockDatabase
     var orderQuantities: MutableMap<Food, Int> = mutableMapOf()
     lateinit var shoppingAdapter: ShoppingAdapter
     lateinit var totalTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val mockFoodIds = resources.getIntArray(R.array.mock_food_ids)
-        val mockFoodNames = resources.getStringArray(R.array.mock_food_names)
-        val mockFoodImages = resources.obtainTypedArray(R.array.mock_food_images)
-        val mockFoodPrices = resources.obtainTypedArray(R.array.mock_food_prices)
-        for (i in 0..5) {
-            foodList.add(Food(mockFoodIds[i].toLong(),
-                mockFoodNames[i],
-                mockFoodImages.getDrawable(i),
-                mockFoodPrices.getFloat(i, 0f)))
-        }
-
         super.onCreate(savedInstanceState)
+        database = MockDatabase(resources)
         setContentView(R.layout.activity_main)
 
-        shoppingAdapter = ShoppingAdapter(foodList,
+        shoppingAdapter = ShoppingAdapter(database.getFoodList(),
                                           orderQuantities,
                                           { food -> changeFoodQuantity(food,  1); },
                                           { food -> changeFoodQuantity(food, -1); })
