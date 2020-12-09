@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="mock_food_ids">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </integer-array>
+    <array name="mock_food_images">
+        <item>@drawable/pad_thai</item>
+        <item>@drawable/chicken_noodle_casserole</item>
+        <item>@drawable/veganburger</item>
+        <item>@drawable/french_fries</item>
+        <item>@drawable/shepherds_pie</item>
+        <item>@drawable/spinach_mushroom_quiche</item>
+    </array>
+    <string-array name="mock_food_names">
+        <item>Pad Thai</item>
+        <item>Chicken casserole</item>
+        <item>Vegan burger</item>
+        <item>French fries</item>
+        <item>Shepherds pie</item>
+        <item>Mushroom quiche</item>
+    </string-array>
+    <array name="mock_food_prices">
+        <item>8</item>
+        <item>7.5</item>
+        <item>5</item>
+        <item>3</item>
+        <item>4.5</item>
+        <item>3.5</item>
+    </array>
+</resources>
