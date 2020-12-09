@@ -2,8 +2,6 @@ package ee.ut.gimmefood
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import ee.ut.gimmefood.data.Food
 import ee.ut.gimmefood.shopping.ShoppingAdapter
 
@@ -11,7 +9,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var database: MockDatabase
     var orderQuantities: MutableMap<Food, Int> = mutableMapOf()
     lateinit var shoppingAdapter: ShoppingAdapter
-    lateinit var totalTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +20,8 @@ class MainActivity : AppCompatActivity() {
                                           { food -> changeFoodQuantity(food,  1); },
                                           { food -> changeFoodQuantity(food, -1); })
 
-        val recyclerView: RecyclerView = findViewById(R.id.my_recyclerview)
-        recyclerView.adapter = shoppingAdapter
+        my_recyclerview.adapter = shoppingAdapter
 
-        totalTextView = findViewById(R.id.total_textview)
         updateTotalText()
     }
 
@@ -45,6 +40,6 @@ class MainActivity : AppCompatActivity() {
         var sum = 0f
         for ((food, quantity) in orderQuantities)
             sum += food.price * quantity
-        totalTextView.text = "${resources.getString(R.string.total_text)} $sum €"
+        total_textview.text = getString(R.string.total_text, sum)
     }
 }

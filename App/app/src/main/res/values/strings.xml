@@ -6,7 +6,7 @@
     <string name="button_remove">-</string>
     <string name="button_place_order">Place an order</string>
 
-    <string name="total_text">Total:</string>
+    <string name="total_text">Total: %.2f €</string>
 
     <string name="food_image_content_description">Image of food</string>
 </resources>
