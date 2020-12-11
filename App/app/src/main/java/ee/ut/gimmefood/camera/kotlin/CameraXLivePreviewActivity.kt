@@ -17,12 +17,12 @@
 package ee.ut.gimmefood.camera.kotlin
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
@@ -66,6 +66,7 @@ class CameraXLivePreviewActivity :
     private var selectedModel = OBJECT_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
+    private val targetResolutionSize = Size(800, 800)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -247,11 +248,12 @@ class CameraXLivePreviewActivity :
         }
 
         val builder = Preview.Builder()
-        // Returns a android.util.Size
-        val targetResolution = PreferenceUtils.getCameraXTargetResolution(this)
-        if (targetResolution != null) {
-            builder.setTargetResolution(targetResolution)
-        }
+//        val targetResolution = PreferenceUtils.getCameraXTargetResolution(this)
+//        if (targetResolution != null) {
+//            builder.setTargetResolution(targetResolution)
+//        }
+        val targetResolution = targetResolutionSize
+        builder.setTargetResolution(targetResolution)
         previewUseCase = builder.build()
         previewUseCase!!.setSurfaceProvider(previewView!!.getSurfaceProvider())
         cameraProvider!!.bindToLifecycle(/* lifecycleOwner= */this,
@@ -298,10 +300,12 @@ class CameraXLivePreviewActivity :
         }
 
         val builder = ImageAnalysis.Builder()
-        val targetResolution = PreferenceUtils.getCameraXTargetResolution(this)
-        if (targetResolution != null) {
-            builder.setTargetResolution(targetResolution)
-        }
+//        val targetResolution = PreferenceUtils.getCameraXTargetResolution(this)
+//        if (targetResolution != null) {
+//            builder.setTargetResolution(targetResolution)
+//        }
+        val targetResolution = targetResolutionSize
+        builder.setTargetResolution(targetResolution)
         analysisUseCase = builder.build()
 
         needUpdateGraphicOverlayImageSourceInfo = true
@@ -404,7 +408,7 @@ class CameraXLivePreviewActivity :
     companion object {
         private const val TAG = "CameraXLivePreview"
         private const val PERMISSION_REQUESTS = 1
-//        private const val OBJECT_DETECTION = "Object Detection"
+        private const val OBJECT_DETECTION = "Object Detection"
 //        private const val OBJECT_DETECTION_CUSTOM = "Custom Object Detection (Bird)"
 //        private const val CUSTOM_AUTOML_OBJECT_DETECTION = "Custom AutoML Object Detection (Flower)"
 //        private const val FACE_DETECTION = "Face Detection"
