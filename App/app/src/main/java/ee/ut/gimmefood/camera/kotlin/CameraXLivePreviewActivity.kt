@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/* Original source: https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/kotlin/CameraXLivePreviewActivity.kt
+
+ */
+
 package ee.ut.gimmefood.camera.kotlin
 
 import android.content.Context
@@ -24,8 +28,11 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Size
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import android.widget.CompoundButton
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -37,11 +44,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
-import ee.ut.gimmefood.camera.CameraXViewModel
-//import ee.ut.gimmefood.preference.PreferenceUtils
-//import ee.ut.gimmefood.preference.SettingsActivity
-//import ee.ut.gimmefood.preference.SettingsActivity.LaunchSource
 import ee.ut.gimmefood.R
+import ee.ut.gimmefood.camera.CameraXViewModel
 import ee.ut.gimmefood.camera.GraphicOverlay
 import ee.ut.gimmefood.camera.VisionImageProcessor
 import ee.ut.gimmefood.camera.kotlin.barcodescanner.BarcodeScannerProcessor
@@ -63,7 +67,7 @@ class CameraXLivePreviewActivity :
     private var analysisUseCase: ImageAnalysis? = null
     private var imageProcessor: VisionImageProcessor? = null
     private var needUpdateGraphicOverlayImageSourceInfo = false
-    private var selectedModel = OBJECT_DETECTION
+    private var selectedModel = BARCODE_SCANNING
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
     private val targetResolutionSize = Size(800, 800)
@@ -73,10 +77,10 @@ class CameraXLivePreviewActivity :
         Log.d(TAG, "onCreate")
         if (VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
             Toast.makeText(
-              applicationContext,
-              "CameraX is only supported on SDK version >=21. Current SDK version is " +
-                      VERSION.SDK_INT,
-              Toast.LENGTH_LONG
+                applicationContext,
+                "CameraX is only supported on SDK version >=21. Current SDK version is " +
+                        VERSION.SDK_INT,
+                Toast.LENGTH_LONG
             )
                 .show()
             return
@@ -84,13 +88,13 @@ class CameraXLivePreviewActivity :
         if (savedInstanceState != null) {
             selectedModel =
                 savedInstanceState.getString(
-                  STATE_SELECTED_MODEL,
-                  OBJECT_DETECTION
+                    STATE_SELECTED_MODEL,
+                    BARCODE_SCANNING
                 )
             lensFacing =
                 savedInstanceState.getInt(
-                  STATE_LENS_FACING,
-                  CameraSelector.LENS_FACING_BACK
+                    STATE_LENS_FACING,
+                    CameraSelector.LENS_FACING_BACK
                 )
         }
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
@@ -103,56 +107,25 @@ class CameraXLivePreviewActivity :
         if (graphicOverlay == null) {
             Log.d(TAG, "graphicOverlay is null")
         }
-//        val spinner = findViewById<Spinner>(R.id.spinner)
         val options: MutableList<String> = ArrayList()
-//        options.add(OBJECT_DETECTION)
-//        options.add(OBJECT_DETECTION_CUSTOM)
-//        options.add(CUSTOM_AUTOML_OBJECT_DETECTION)
-//        options.add(FACE_DETECTION)
-//        options.add(TEXT_RECOGNITION)
+        // can add more options
         options.add(BARCODE_SCANNING)
-//        options.add(IMAGE_LABELING)
-//        options.add(IMAGE_LABELING_CUSTOM)
-//        options.add(CUSTOM_AUTOML_LABELING)
-//        options.add(POSE_DETECTION)
 
-        // Creating adapter for spinner
-        val dataAdapter =
-            ArrayAdapter(this, R.layout.spinner_style, options)
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        // attaching data adapter to spinner
-//        spinner.adapter = dataAdapter
-//        spinner.onItemSelectedListener = this
-//        val facingSwitch =
-//            findViewById<ToggleButton>(R.id.facing_switch)
-//        facingSwitch.setOnCheckedChangeListener(this)
         ViewModelProvider(
-          this,
-          ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )
             .get(CameraXViewModel::class.java)
             .processCameraProvider
             .observe(
-              this,
-              Observer { provider: ProcessCameraProvider? ->
-                cameraProvider = provider
-                if (allPermissionsGranted()) {
-                  bindAllCameraUseCases()
+                this,
+                Observer { provider: ProcessCameraProvider? ->
+                    cameraProvider = provider
+                    if (allPermissionsGranted()) {
+                        bindAllCameraUseCases()
+                    }
                 }
-              }
             )
-
-//        val settingsButton = findViewById<ImageView>(R.id.settings_button)
-//        settingsButton.setOnClickListener {
-//            val intent =
-//                Intent(applicationContext, SettingsActivity::class.java)
-//            intent.putExtra(
-//              SettingsActivity.EXTRA_LAUNCH_SOURCE,
-//              LaunchSource.CAMERAX_LIVE_PREVIEW
-//            )
-//            startActivity(intent)
-//        }
 
         if (!allPermissionsGranted()) {
             runtimePermissions
@@ -201,8 +174,8 @@ class CameraXLivePreviewActivity :
             // Falls through
         }
         Toast.makeText(
-          applicationContext, "This device does not have lens with facing: $newLensFacing",
-          Toast.LENGTH_SHORT
+            applicationContext, "This device does not have lens with facing: $newLensFacing",
+            Toast.LENGTH_SHORT
         )
             .show()
     }
@@ -237,9 +210,6 @@ class CameraXLivePreviewActivity :
     }
 
     private fun bindPreviewUseCase() {
-//        if (!PreferenceUtils.isCameraLiveViewportEnabled(this)) {
-//            return
-//        }
         if (cameraProvider == null) {
             return
         }
@@ -248,17 +218,13 @@ class CameraXLivePreviewActivity :
         }
 
         val builder = Preview.Builder()
-//        val targetResolution = PreferenceUtils.getCameraXTargetResolution(this)
-//        if (targetResolution != null) {
-//            builder.setTargetResolution(targetResolution)
-//        }
         val targetResolution = targetResolutionSize
         builder.setTargetResolution(targetResolution)
         previewUseCase = builder.build()
         previewUseCase!!.setSurfaceProvider(previewView!!.getSurfaceProvider())
         cameraProvider!!.bindToLifecycle(/* lifecycleOwner= */this,
-          cameraSelector!!,
-          previewUseCase
+            cameraSelector!!,
+            previewUseCase
         )
     }
 
@@ -275,35 +241,31 @@ class CameraXLivePreviewActivity :
         imageProcessor = try {
             when (selectedModel) {
                 // can be more models, but this is all we need
-              BARCODE_SCANNING -> {
-                Log.i(
-                  TAG,
-                  "Using Barcode Detector Processor"
-                )
-                BarcodeScannerProcessor(this)
-              }
+                BARCODE_SCANNING -> {
+                    Log.i(
+                        TAG,
+                        "Using Barcode Detector Processor"
+                    )
+                    BarcodeScannerProcessor(this)
+                }
                 else -> throw IllegalStateException("Invalid model name")
             }
         } catch (e: Exception) {
             Log.e(
-              TAG,
-              "Can not create image processor: $selectedModel",
-              e
+                TAG,
+                "Can not create image processor: $selectedModel",
+                e
             )
             Toast.makeText(
-              applicationContext,
-              "Can not create image processor: " + e.localizedMessage,
-              Toast.LENGTH_LONG
+                applicationContext,
+                "Can not create image processor: " + e.localizedMessage,
+                Toast.LENGTH_LONG
             )
                 .show()
             return
         }
 
         val builder = ImageAnalysis.Builder()
-//        val targetResolution = PreferenceUtils.getCameraXTargetResolution(this)
-//        if (targetResolution != null) {
-//            builder.setTargetResolution(targetResolution)
-//        }
         val targetResolution = targetResolutionSize
         builder.setTargetResolution(targetResolution)
         analysisUseCase = builder.build()
@@ -311,45 +273,45 @@ class CameraXLivePreviewActivity :
         needUpdateGraphicOverlayImageSourceInfo = true
 
         analysisUseCase?.setAnalyzer(
-          // imageProcessor.processImageProxy will use another thread to run the detection underneath,
-          // thus we can just runs the analyzer itself on main thread.
-          ContextCompat.getMainExecutor(this),
-          ImageAnalysis.Analyzer { imageProxy: ImageProxy ->
-            if (needUpdateGraphicOverlayImageSourceInfo) {
-              val isImageFlipped =
-                lensFacing == CameraSelector.LENS_FACING_FRONT
-              val rotationDegrees =
-                imageProxy.imageInfo.rotationDegrees
-              if (rotationDegrees == 0 || rotationDegrees == 180) {
-                graphicOverlay!!.setImageSourceInfo(
-                  imageProxy.width, imageProxy.height, isImageFlipped
-                )
-              } else {
-                graphicOverlay!!.setImageSourceInfo(
-                  imageProxy.height, imageProxy.width, isImageFlipped
-                )
-              }
-              needUpdateGraphicOverlayImageSourceInfo = false
+            // imageProcessor.processImageProxy will use another thread to run the detection underneath,
+            // thus we can just runs the analyzer itself on main thread.
+            ContextCompat.getMainExecutor(this),
+            ImageAnalysis.Analyzer { imageProxy: ImageProxy ->
+                if (needUpdateGraphicOverlayImageSourceInfo) {
+                    val isImageFlipped =
+                        lensFacing == CameraSelector.LENS_FACING_FRONT
+                    val rotationDegrees =
+                        imageProxy.imageInfo.rotationDegrees
+                    if (rotationDegrees == 0 || rotationDegrees == 180) {
+                        graphicOverlay!!.setImageSourceInfo(
+                            imageProxy.width, imageProxy.height, isImageFlipped
+                        )
+                    } else {
+                        graphicOverlay!!.setImageSourceInfo(
+                            imageProxy.height, imageProxy.width, isImageFlipped
+                        )
+                    }
+                    needUpdateGraphicOverlayImageSourceInfo = false
+                }
+                try {
+                    imageProcessor!!.processImageProxy(imageProxy, graphicOverlay)
+                } catch (e: MlKitException) {
+                    Log.e(
+                        TAG,
+                        "Failed to process image. Error: " + e.localizedMessage
+                    )
+                    Toast.makeText(
+                        applicationContext,
+                        e.localizedMessage,
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
             }
-            try {
-              imageProcessor!!.processImageProxy(imageProxy, graphicOverlay)
-            } catch (e: MlKitException) {
-              Log.e(
-                TAG,
-                "Failed to process image. Error: " + e.localizedMessage
-              )
-              Toast.makeText(
-                applicationContext,
-                e.localizedMessage,
-                Toast.LENGTH_SHORT
-              )
-                .show()
-            }
-          }
         )
         cameraProvider!!.bindToLifecycle( /* lifecycleOwner= */this,
-          cameraSelector!!,
-          analysisUseCase
+            cameraSelector!!,
+            analysisUseCase
         )
     }
 
@@ -386,17 +348,17 @@ class CameraXLivePreviewActivity :
             }
             if (allNeededPermissions.isNotEmpty()) {
                 ActivityCompat.requestPermissions(
-                  this,
-                  allNeededPermissions.toTypedArray(),
-                  PERMISSION_REQUESTS
+                    this,
+                    allNeededPermissions.toTypedArray(),
+                    PERMISSION_REQUESTS
                 )
             }
         }
 
     override fun onRequestPermissionsResult(
-      requestCode: Int,
-      permissions: Array<String>,
-      grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         Log.i(TAG, "Permission granted!")
         if (allPermissionsGranted()) {
@@ -408,23 +370,13 @@ class CameraXLivePreviewActivity :
     companion object {
         private const val TAG = "CameraXLivePreview"
         private const val PERMISSION_REQUESTS = 1
-        private const val OBJECT_DETECTION = "Object Detection"
-//        private const val OBJECT_DETECTION_CUSTOM = "Custom Object Detection (Bird)"
-//        private const val CUSTOM_AUTOML_OBJECT_DETECTION = "Custom AutoML Object Detection (Flower)"
-//        private const val FACE_DETECTION = "Face Detection"
-//        private const val TEXT_RECOGNITION = "Text Recognition"
         private const val BARCODE_SCANNING = "Barcode Scanning"
-//        private const val IMAGE_LABELING = "Image Labeling"
-//        private const val IMAGE_LABELING_CUSTOM = "Custom Image Labeling (Bird)"
-//        private const val CUSTOM_AUTOML_LABELING = "Custom AutoML Image Labeling (Flower)"
-//        private const val POSE_DETECTION = "Pose Detection"
-
         private const val STATE_SELECTED_MODEL = "selected_model"
         private const val STATE_LENS_FACING = "lens_facing"
 
         private fun isPermissionGranted(
-          context: Context,
-          permission: String?
+            context: Context,
+            permission: String?
         ): Boolean {
             if (ContextCompat.checkSelfPermission(context, permission!!)
                 == PackageManager.PERMISSION_GRANTED
