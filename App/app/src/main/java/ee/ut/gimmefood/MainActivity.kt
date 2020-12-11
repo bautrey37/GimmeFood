@@ -16,5 +16,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("Main", "button clicked")
             startActivity(Intent(this, CameraXLivePreviewActivity::class.java))
         }
+
     }
 }
