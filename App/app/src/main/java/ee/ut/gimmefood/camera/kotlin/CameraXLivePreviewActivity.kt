@@ -21,6 +21,7 @@
 package ee.ut.gimmefood.camera.kotlin
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -40,10 +41,12 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
+import ee.ut.gimmefood.MenuActivity
 import ee.ut.gimmefood.R
 import ee.ut.gimmefood.camera.CameraXViewModel
 import ee.ut.gimmefood.camera.GraphicOverlay
@@ -367,6 +370,10 @@ class CameraXLivePreviewActivity :
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    fun test() {
+        startActivity(Intent(this, MenuActivity::class.java))
+    }
+
     companion object {
         private const val TAG = "CameraXLivePreview"
         private const val PERMISSION_REQUESTS = 1
@@ -386,6 +393,13 @@ class CameraXLivePreviewActivity :
             }
             Log.i(TAG, "Permission NOT granted: $permission")
             return false
+        }
+
+        fun barcodeReadResult(barcode: String?) {
+            checkNotNull(barcode) { "Attempting to read a null barcode." }
+
+            startActivity(Intent(this, MenuActivity::class.java)) // error
+            test() // cannot find function
         }
     }
 }
