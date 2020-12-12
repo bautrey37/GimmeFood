@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ee.ut.gimmefood.data.Food
 import ee.ut.gimmefood.shopping.ShoppingAdapter
-import kotlinx.android.synthetic.main.activity_main.my_recyclerview
-import kotlinx.android.synthetic.main.activity_main.total_textview
 import kotlinx.android.synthetic.main.activity_order_details.*
 
 class OrderDetailsActivity : AppCompatActivity() {
@@ -26,7 +24,7 @@ class OrderDetailsActivity : AppCompatActivity() {
                 { food -> changeFoodQuantity(food,  1); },
                 { food -> changeFoodQuantity(food, -1); })
 
-        my_recyclerview.adapter = shoppingAdapter
+        order_recyclerview.adapter = shoppingAdapter
 
         cancel_button.setOnClickListener{ finish() }
         order_button.setOnClickListener{

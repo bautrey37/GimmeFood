@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GimmeFood</string>
+    <string name="app_name">Gimme Food</string>
 
     <string name="menu_text">Today\'s menu</string>
     <string name="button_add">+</string>

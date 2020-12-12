@@ -6,56 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/button_scan"
+        android:layout_width="254dp"
+        android:layout_height="181dp"
+        android:text="Scan QR"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
-        android:id="@+id/header_text"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/menu_text"
-        android:textAppearance="?attr/textAppearanceHeadline3"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/my_recyclerview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/header_text"
-        app:layout_constraintBottom_toTopOf="@id/bottom_layout"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Scan QR code to retrieve menu"
+        app:layout_constraintBottom_toTopOf="@+id/button_scan"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layoutManager="LinearLayoutManager"/>
-
-    <LinearLayout
-        android:id="@+id/bottom_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/total_textview"
-            android:text="@string/total_text"
-            android:gravity="center"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/shoppinglist_footer_element_margin"
-            android:layout_weight="0.5"
-            android:textAppearance="?attr/textAppearanceHeadline5"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <Button
-            android:id="@+id/button_place_order"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/button_place_order"
-            android:enabled="false"
-            android:layout_weight="0.5"
-            android:layout_margin="@dimen/shoppinglist_footer_element_margin" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
