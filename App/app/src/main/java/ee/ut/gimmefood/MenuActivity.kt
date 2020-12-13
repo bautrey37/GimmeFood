@@ -2,24 +2,31 @@ package ee.ut.gimmefood
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import ee.ut.gimmefood.data.Datastore
 import ee.ut.gimmefood.data.Food
 import ee.ut.gimmefood.shopping.ShoppingAdapter
 import kotlinx.android.synthetic.main.activity_menu.*
 
 class MenuActivity : AppCompatActivity() {
+    private lateinit var unsubscribeFromDatastore: () -> Unit
     val REQUEST_ORDER = 200
     lateinit var database: MockDatabase
     var orderQuantities: MutableMap<Food, Int> = mutableMapOf()
     lateinit var shoppingAdapter: ShoppingAdapter
+    val datastore = Datastore.getInstance()
+    val restaurantId: String = "0";
+    val tableNum: Int = 0;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         database = MockDatabase(resources)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_menu)
 
-        shoppingAdapter = ShoppingAdapter(database.getFoodList(),
+        shoppingAdapter = ShoppingAdapter(this, database.getFoodList(),
             orderQuantities,
             { food -> changeFoodQuantity(food, 1); },
             { food -> changeFoodQuantity(food, -1); })
@@ -27,7 +34,7 @@ class MenuActivity : AppCompatActivity() {
         menu_recyclerview.adapter = shoppingAdapter
 
         button_place_order.setOnClickListener {
-            val orderFoodIdsList = mutableListOf<Long>()
+            val orderFoodIdsList = mutableListOf<String>()
             val orderQuantitiesList = mutableListOf<Int>()
             for ((key, value) in orderQuantities) {
                 orderFoodIdsList.add(key.id)
@@ -35,12 +42,21 @@ class MenuActivity : AppCompatActivity() {
             }
 
             val intent = Intent(this, OrderDetailsActivity::class.java)
-            intent.putExtra("ids", orderFoodIdsList.toLongArray())
+            intent.putExtra("ids", orderFoodIdsList.toTypedArray())
             intent.putExtra("quantities", orderQuantitiesList.toIntArray())
+            intent.putExtra("restaurantId", restaurantId)
+            intent.putExtra("tableNum", tableNum)
             startActivityForResult(intent, REQUEST_ORDER)
         }
 
         notifyDataSetChanged()
+
+        unsubscribeFromDatastore = datastore.subscribeToRestaraunt(restaurantId, this::onDataChange)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unsubscribeFromDatastore();
     }
 
     private fun notifyDataSetChanged() {
@@ -76,7 +92,14 @@ class MenuActivity : AppCompatActivity() {
         if (requestCode == REQUEST_ORDER) {
             if (resultCode == RESULT_OK) {
                 clearQuantities()
+                Toast.makeText(this, "Order Placed!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+
+    fun onDataChange(restaurant: Datastore.Restaurant) {
+        shoppingAdapter.foodList = restaurant.menu;
+        notifyDataSetChanged();
     }
 }

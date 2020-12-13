@@ -1,10 +1,11 @@
 package ee.ut.gimmefood
 
 import android.content.res.Resources
+import androidx.core.graphics.drawable.toBitmap
 import ee.ut.gimmefood.data.Food
 
 class MockDatabase(val resources: Resources) {
-    var foodMap: MutableMap<Long, Food> = mutableMapOf()
+    var foodMap: MutableMap<String, Food> = mutableMapOf()
 
     init {
         val mockFoodIds = resources.getIntArray(R.array.mock_food_ids)
@@ -16,7 +17,7 @@ class MockDatabase(val resources: Resources) {
             val name = mockFoodNames[i]
             val image = mockFoodImages.getDrawable(i)
             val price = mockFoodPrices.getFloat(i, 0f)
-            foodMap.put(id, Food(id, name, image, price))
+            foodMap[id.toString()] = Food(id.toString(), name, image?.toBitmap(), price)
         }
     }
 
@@ -24,7 +25,7 @@ class MockDatabase(val resources: Resources) {
         return foodMap.values.toList()
     }
 
-    fun getFoodById(id: Long): Food? {
-        return foodMap.get(id)
+    fun getFoodById(id: String): Food? {
+        return foodMap[id]
     }
 }
