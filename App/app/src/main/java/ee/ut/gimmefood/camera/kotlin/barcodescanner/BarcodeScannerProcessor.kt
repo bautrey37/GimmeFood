@@ -33,7 +33,7 @@ import ee.ut.gimmefood.camera.kotlin.VisionProcessorBase
 
 
 /** Barcode Detector Demo.  */
-class BarcodeScannerProcessor(context: Context) : VisionProcessorBase<List<Barcode>>(context) {
+class BarcodeScannerProcessor(context: Context, val onBarcodeSuccess: (String) -> Unit) : VisionProcessorBase<List<Barcode>>(context) {
 
     // Note that if you know which format of barcode your app is dealing with, detection will be
     // faster to specify the supported barcode formats one by one, e.g.
@@ -63,8 +63,7 @@ class BarcodeScannerProcessor(context: Context) : VisionProcessorBase<List<Barco
             val barcode = barcodes[i]
 //      graphicOverlay.add(BarcodeGraphic(graphicOverlay, barcode))
 //      logExtrasForTesting(barcode)
-            CameraXLivePreviewActivity.barcodeReadResult(barcode.rawValue)
-            ContextCompat.startActivity(Intent(this, MenuActivity::class.java)) // error
+            onBarcodeSuccess(barcode.rawValue!!)
         }
     }
 

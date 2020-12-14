@@ -31,7 +31,6 @@ import android.util.Size
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -249,7 +248,7 @@ class CameraXLivePreviewActivity :
                         TAG,
                         "Using Barcode Detector Processor"
                     )
-                    BarcodeScannerProcessor(this)
+                    BarcodeScannerProcessor(this, this::onBarcodeSuccess)
                 }
                 else -> throw IllegalStateException("Invalid model name")
             }
@@ -370,7 +369,7 @@ class CameraXLivePreviewActivity :
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    fun test() {
+    private fun onBarcodeSuccess(barcode: String) {
         startActivity(Intent(this, MenuActivity::class.java))
     }
 
@@ -393,13 +392,6 @@ class CameraXLivePreviewActivity :
             }
             Log.i(TAG, "Permission NOT granted: $permission")
             return false
-        }
-
-        fun barcodeReadResult(barcode: String?) {
-            checkNotNull(barcode) { "Attempting to read a null barcode." }
-
-            startActivity(Intent(this, MenuActivity::class.java)) // error
-            test() // cannot find function
         }
     }
 }
