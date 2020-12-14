@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Gimme Food</string>
 
-    <string name="menu_text">Today\'s menu</string>
+    <string name="menu_text">Today\'s menu at</string>
     <string name="button_add">+</string>
     <string name="button_remove">-</string>
     <string name="button_place_order">Place an order</string>
@@ -13,4 +13,5 @@
     <string name="order_details_activity_title">My order</string>
     <string name="order_details_order_button_text">ORDER</string>
     <string name="order_details_cancel_button_text">Cancel</string>
+    <string name="restaurant_name">Restaurant Name</string>
 </resources>
