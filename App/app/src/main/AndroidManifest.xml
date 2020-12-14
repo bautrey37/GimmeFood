@@ -8,6 +8,7 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -16,25 +17,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GimmeFood">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MenuActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
+        <activity android:name=".MainActivity" />
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="barcode" />
 
         <activity
             android:name=".camera.kotlin.CameraXLivePreviewActivity"
-            android:exported="true"
-            android:theme="@style/Theme.GimmeFood" />
-        <activity
-            android:name=".MenuActivity"
             android:exported="true"
             android:theme="@style/Theme.GimmeFood" />
         <activity android:name=".OrderDetailsActivity"/>

@@ -1,5 +1,8 @@
 package ee.ut.gimmefood.shopping
 
+import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,15 +10,22 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import ee.ut.gimmefood.MenuActivity
 import ee.ut.gimmefood.R
 import ee.ut.gimmefood.data.Food
+import java.net.URL
+import kotlin.concurrent.thread
 
-class ShoppingAdapter(private val foodList: List<Food>,
+class ShoppingAdapter(
+    var activity: Activity,
+    var foodList: List<Food>,
                       private val orderQuantities: Map<Food, Int>,
                       private val onAddClick: (Food) -> Unit,
                       private val onRemoveClick: (Food) -> Unit)
     : RecyclerView.Adapter<ShoppingAdapter.ShoppingViewHolder>()
 {
+
+    private val imageCache: MutableMap<String, Bitmap> = mutableMapOf();
 
     class ShoppingViewHolder(private val view: View,
                              private val orderQuantities: Map<Food, Int>,
@@ -33,13 +43,17 @@ class ShoppingAdapter(private val foodList: List<Food>,
 
         fun bind(food: Food) {
             foodTextView.text = food.name
-            foodImageView.setImageDrawable(food.image)
+            foodImageView.setImageBitmap(food.image)
             foodPriceView.text = "${food.price}"
             addButton.setOnClickListener{ onAddClick(food) }
             val quantity = orderQuantities.getOrElse(food, {0})
             orderQuantityView.text = "${quantity}"
             removeButton.isEnabled = quantity > 0
             removeButton.setOnClickListener{ onRemoveClick(food) }
+        }
+
+        fun bindImage(image: Bitmap?) {
+            foodImageView.setImageBitmap(image)
         }
     }
 
@@ -51,6 +65,25 @@ class ShoppingAdapter(private val foodList: List<Food>,
 
     override fun onBindViewHolder(holder: ShoppingViewHolder, position: Int) {
         holder.bind(foodList[position])
+
+        if (foodList[position].image == null) {
+            val image_url = foodList[position].image_url
+            if (imageCache.containsKey(image_url)) {
+                holder.bindImage(imageCache[image_url]);
+            } else {
+                if (image_url.isNotEmpty()) {
+                    thread(start=true) {
+                        val url = URL(image_url)
+                        val fullBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                        activity.runOnUiThread {
+                            holder.bindImage(fullBitmap)
+                        }
+                        foodList[position].image = fullBitmap
+                        imageCache[image_url] = fullBitmap
+                    }
+                }
+            }
+        }
     }
 
     override fun getItemCount(): Int {
