@@ -52,6 +52,7 @@ import ee.ut.gimmefood.camera.GraphicOverlay
 import ee.ut.gimmefood.camera.VisionImageProcessor
 import ee.ut.gimmefood.camera.kotlin.barcodescanner.BarcodeScannerProcessor
 import java.util.*
+import kotlin.reflect.typeOf
 
 /** Live preview demo app for ML Kit APIs using CameraX.  */
 @KeepName
@@ -370,11 +371,33 @@ class CameraXLivePreviewActivity :
     }
 
     private fun onBarcodeSuccess(barcode: String) {
-        startActivity(Intent(this, MenuActivity::class.java))
+        Log.i(TAG_SCAN, "barcode: $barcode")
+        val barcodeParts = barcode.split(",")
+        val restaurantId = barcodeParts[0]
+        val tableNum = try {
+             barcodeParts[1].toInt()
+        } catch (e: java.lang.Exception) {
+            Log.w(TAG_SCAN, "table number not found in barcode. Exception: ${e.message}")
+            -1
+        }
+
+        Log.i(TAG_SCAN, "restaurant: $restaurantId, table: $tableNum")
+
+        if (restaurantId.isEmpty()) {
+            // TODO: check with firebase also
+            Log.e(TAG_SCAN, "Restaurant does not exist")
+            return
+        }
+
+        val menuIntent = Intent(this, MenuActivity::class.java)
+        menuIntent.putExtra("restaurantId", restaurantId)
+        menuIntent.putExtra("tableNum", tableNum)
+        startActivity(menuIntent)
     }
 
     companion object {
         private const val TAG = "CameraXLivePreview"
+        private const val TAG_SCAN = "BarcodeScanner"
         private const val PERMISSION_REQUESTS = 1
         private const val BARCODE_SCANNING = "Barcode Scanning"
         private const val STATE_SELECTED_MODEL = "selected_model"

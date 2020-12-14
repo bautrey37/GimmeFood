@@ -2,29 +2,35 @@ package ee.ut.gimmefood
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import ee.ut.gimmefood.data.Datastore
 import ee.ut.gimmefood.data.Food
 import ee.ut.gimmefood.shopping.ShoppingAdapter
 import kotlinx.android.synthetic.main.activity_menu.*
 
 class MenuActivity : AppCompatActivity() {
+    companion object {
+        val TAG = MenuActivity::class.java.name
+    }
+
     private lateinit var unsubscribeFromDatastore: () -> Unit
     val REQUEST_ORDER = 200
     lateinit var database: MockDatabase
     var orderQuantities: MutableMap<Food, Int> = mutableMapOf()
     lateinit var shoppingAdapter: ShoppingAdapter
-    val datastore = Datastore.getInstance()
-    val restaurantId: String = "0";
-    val tableNum: Int = 0;
+    private val datastore = Datastore.getInstance()
+    private var restaurantId: String? = null
+    private var tableNum: Int = -1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         database = MockDatabase(resources)
         setContentView(R.layout.activity_menu)
+
+        loadIntentData()
 
         shoppingAdapter = ShoppingAdapter(this, database.getFoodList(),
             orderQuantities,
@@ -51,12 +57,21 @@ class MenuActivity : AppCompatActivity() {
 
         notifyDataSetChanged()
 
-        unsubscribeFromDatastore = datastore.subscribeToRestaraunt(restaurantId, this::onDataChange)
+        restaurantId?.let {
+            unsubscribeFromDatastore = datastore.subscribeToRestaraunt(it, this::onDataChange)
+        }
+    }
+
+    private fun loadIntentData() {
+        Log.i(TAG, intent.extras?.keySet().toString())
+        restaurantId = intent.getStringExtra("restaurantId")
+        tableNum = intent.getIntExtra("tableNum", -1)
+        Log.i(TAG, "restaurant: $restaurantId, table: $tableNum")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unsubscribeFromDatastore();
+        unsubscribeFromDatastore()
     }
 
     private fun notifyDataSetChanged() {
@@ -99,7 +114,7 @@ class MenuActivity : AppCompatActivity() {
 
 
     fun onDataChange(restaurant: Datastore.Restaurant) {
-        shoppingAdapter.foodList = restaurant.menu;
-        notifyDataSetChanged();
+        shoppingAdapter.foodList = restaurant.menu
+        notifyDataSetChanged()
     }
 }
