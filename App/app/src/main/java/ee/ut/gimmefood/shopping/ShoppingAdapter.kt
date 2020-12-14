@@ -10,8 +10,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import ee.ut.gimmefood.MenuActivity
 import ee.ut.gimmefood.R
+import ee.ut.gimmefood.blurhash.BlurHashDecoder
 import ee.ut.gimmefood.data.Food
 import java.net.URL
 import kotlin.concurrent.thread
@@ -43,7 +43,7 @@ class ShoppingAdapter(
 
         fun bind(food: Food) {
             foodTextView.text = food.name
-            foodImageView.setImageBitmap(food.image)
+            foodImageView.setImageBitmap(food.image ?: BlurHashDecoder.decode(food.image_hash, 100, 100))
             foodPriceView.text = "${food.price}"
             addButton.setOnClickListener{ onAddClick(food) }
             val quantity = orderQuantities.getOrElse(food, {0})
@@ -53,7 +53,9 @@ class ShoppingAdapter(
         }
 
         fun bindImage(image: Bitmap?) {
-            foodImageView.setImageBitmap(image)
+            image?.let {
+                foodImageView.setImageBitmap(it)
+            }
         }
     }
 
@@ -67,19 +69,19 @@ class ShoppingAdapter(
         holder.bind(foodList[position])
 
         if (foodList[position].image == null) {
-            val image_url = foodList[position].image_url
-            if (imageCache.containsKey(image_url)) {
-                holder.bindImage(imageCache[image_url]);
+            val imageUrl = foodList[position].image_url
+            if (imageCache.containsKey(imageUrl)) {
+                holder.bindImage(imageCache[imageUrl]);
             } else {
-                if (image_url.isNotEmpty()) {
+                if (imageUrl.isNotEmpty()) {
                     thread(start=true) {
-                        val url = URL(image_url)
+                        val url = URL(imageUrl)
                         val fullBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
                         activity.runOnUiThread {
                             holder.bindImage(fullBitmap)
                         }
                         foodList[position].image = fullBitmap
-                        imageCache[image_url] = fullBitmap
+                        imageCache[imageUrl] = fullBitmap
                     }
                 }
             }

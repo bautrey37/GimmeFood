@@ -32,7 +32,7 @@ class MenuActivity : AppCompatActivity() {
 
         loadIntentData()
 
-        shoppingAdapter = ShoppingAdapter(this, database.getFoodList(),
+        shoppingAdapter = ShoppingAdapter(this, listOf(),
             orderQuantities,
             { food -> changeFoodQuantity(food, 1); },
             { food -> changeFoodQuantity(food, -1); })
@@ -115,6 +115,7 @@ class MenuActivity : AppCompatActivity() {
 
     fun onDataChange(restaurant: Datastore.Restaurant) {
         shoppingAdapter.foodList = restaurant.menu
+        tv_restaurant_name.text = restaurant.name
         notifyDataSetChanged()
     }
 }
