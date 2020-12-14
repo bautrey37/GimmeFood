@@ -1,5 +1,6 @@
 package ee.ut.gimmefood
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ee.ut.gimmefood.data.Datastore
@@ -10,9 +11,12 @@ import kotlinx.android.synthetic.main.activity_order_details.*
 class OrderDetailsActivity : AppCompatActivity() {
     lateinit var database: MockDatabase
     lateinit var shoppingAdapter: ShoppingAdapter
-    private val orderQuantities = mutableMapOf<Food, Int>()
+    private val foods = mutableListOf<Food>()
+    private val orderQuantities = mutableMapOf<String, Int>()
     private var restaurantId: String? = null
     private var tableNum: Int = -1
+
+    val REQUEST_ORDER = 201
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +25,7 @@ class OrderDetailsActivity : AppCompatActivity() {
 
         loadIntentData()
 
-        shoppingAdapter = ShoppingAdapter(this, orderQuantities.keys.toList(),
+        shoppingAdapter = ShoppingAdapter(this, foods,
             orderQuantities,
             { food -> changeFoodQuantity(food, 1); },
             { food -> changeFoodQuantity(food, -1); })
@@ -31,8 +35,6 @@ class OrderDetailsActivity : AppCompatActivity() {
         cancel_button.setOnClickListener { finish() }
         order_button.setOnClickListener {
             submitOrder()
-            setResult(RESULT_OK)
-            finish()
         }
 
         updateTotalText()
@@ -40,29 +42,54 @@ class OrderDetailsActivity : AppCompatActivity() {
 
     private fun submitOrder() {
         restaurantId?.let {
-            Datastore.getInstance().sendOrder(it, tableNum, orderQuantities, getTotalPrice())
+            Datastore.getInstance().sendOrder(
+                it,
+                tableNum,
+                orderQuantities
+                    .map { (id, quantity) -> foods.find { it.id == id }!! to quantity }
+                    .toMap()
+                    .toMutableMap(),
+                getTotalPrice()
+            )
+            val intent = Intent(this, OrderResult::class.java)
+            intent.putExtra("summary", generateSummary())
+            startActivityForResult(intent, REQUEST_ORDER)
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_ORDER) {
+            setResult(resultCode)
+            finish()
+        }
+    }
+
+
+    private fun generateSummary(): String {
+        return foods
+            .filter { orderQuantities[it.id] != null }
+            .joinToString("\n") { "${it.name} x${orderQuantities[it.id]}" }
     }
 
     private fun loadIntentData() {
         val foodIds = intent.getStringArrayExtra("ids")
         if (foodIds != null) {
             intent.getIntArrayExtra("quantities")?.forEachIndexed { index, quantity ->
-                Datastore.getInstance().getFoodById(foodIds[index])?.let {
-                    orderQuantities[it] = quantity
-                }
+                orderQuantities[foodIds[index]] = quantity
             }
+            foodIds.forEach { id -> Datastore.getInstance().getFoodById(id)?.let { foods += it } }
         }
         restaurantId = intent.getStringExtra("restaurantId")
         tableNum = intent.getIntExtra("tableNum", -1)
     }
 
     private fun changeFoodQuantity(food: Food, changeDelta: Int) {
-        val newQuantity = orderQuantities.getOrElse(food, { 0 }) + changeDelta
+        val newQuantity = orderQuantities.getOrElse(food.id, { 0 }) + changeDelta
         if (newQuantity <= 0) {
-            orderQuantities.remove(food)
+            orderQuantities.remove(food.id)
         } else {
-            orderQuantities.put(food, newQuantity)
+            orderQuantities[food.id] = newQuantity
         }
         shoppingAdapter.notifyDataSetChanged()
         updateTotalText()
@@ -71,14 +98,14 @@ class OrderDetailsActivity : AppCompatActivity() {
     }
 
     private fun updateTotalText() {
-        val sum = getTotalPrice();
+        val sum = getTotalPrice()
         total_textview.text = getString(R.string.total_text, sum)
     }
 
     private fun getTotalPrice(): Float {
         var sum = 0f
-        for ((food, quantity) in orderQuantities)
-            sum += food.price * quantity
+        for ((id, quantity) in orderQuantities)
+            sum += foods.find { it.id == id }?.price?.times(quantity) ?: 0f
         return sum
     }
 }

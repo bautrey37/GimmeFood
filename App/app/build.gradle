@@ -48,6 +48,8 @@ dependencies {
 
     // UI
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation "androidx.activity:activity-ktx:1.1.0"
 
     // Barcodes
     implementation 'com.google.mlkit:barcode-scanning:16.1.0'
@@ -67,4 +69,6 @@ dependencies {
 
     implementation platform('com.google.firebase:firebase-bom:26.1.1')
     implementation 'com.google.firebase:firebase-database-ktx'
+
+
 }

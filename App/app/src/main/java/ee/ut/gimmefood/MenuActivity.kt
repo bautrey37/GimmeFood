@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ee.ut.gimmefood.data.Datastore
 import ee.ut.gimmefood.data.Food
@@ -13,27 +14,26 @@ import kotlinx.android.synthetic.main.activity_menu.*
 class MenuActivity : AppCompatActivity() {
     companion object {
         val TAG = MenuActivity::class.java.name
+        val RESULT_FINISH = 12121
     }
 
     private lateinit var unsubscribeFromDatastore: () -> Unit
     val REQUEST_ORDER = 200
-    lateinit var database: MockDatabase
-    var orderQuantities: MutableMap<Food, Int> = mutableMapOf()
     lateinit var shoppingAdapter: ShoppingAdapter
     private val datastore = Datastore.getInstance()
     private var restaurantId: String? = null
     private var tableNum: Int = -1
 
+    private val model: MenuViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database = MockDatabase(resources)
         setContentView(R.layout.activity_menu)
 
         loadIntentData()
 
         shoppingAdapter = ShoppingAdapter(this, listOf(),
-            orderQuantities,
+            model.orderQuantities,
             { food -> changeFoodQuantity(food, 1); },
             { food -> changeFoodQuantity(food, -1); })
 
@@ -42,8 +42,8 @@ class MenuActivity : AppCompatActivity() {
         button_place_order.setOnClickListener {
             val orderFoodIdsList = mutableListOf<String>()
             val orderQuantitiesList = mutableListOf<Int>()
-            for ((key, value) in orderQuantities) {
-                orderFoodIdsList.add(key.id)
+            for ((id, value) in model.orderQuantities) {
+                orderFoodIdsList.add(id)
                 orderQuantitiesList.add(value)
             }
 
@@ -77,28 +77,28 @@ class MenuActivity : AppCompatActivity() {
     private fun notifyDataSetChanged() {
         shoppingAdapter.notifyDataSetChanged()
         updateTotalText()
-        button_place_order.isEnabled = orderQuantities.isNotEmpty()
+        button_place_order.isEnabled = model.orderQuantities.isNotEmpty()
     }
 
     private fun changeFoodQuantity(food: Food, changeDelta: Int) {
-        val newQuantity = orderQuantities.getOrElse(food, { 0 }) + changeDelta
+        val newQuantity = model.orderQuantities.getOrElse(food.id, { 0 }) + changeDelta
         if (newQuantity <= 0) {
-            orderQuantities.remove(food)
+            model.orderQuantities.remove(food.id)
         } else {
-            orderQuantities.put(food, newQuantity)
+            model.orderQuantities[food.id] = newQuantity
         }
         notifyDataSetChanged()
     }
 
     private fun updateTotalText() {
         var sum = 0f
-        for ((food, quantity) in orderQuantities)
-            sum += food.price * quantity
+        for ((id, quantity) in model.orderQuantities)
+            sum += shoppingAdapter.foodList.find { it.id == id }?.price?.times(quantity) ?: 0f
         total_textview.text = getString(R.string.total_text, sum)
     }
 
     private fun clearQuantities() {
-        orderQuantities.clear()
+        model.orderQuantities.clear()
         notifyDataSetChanged()
     }
 
@@ -107,7 +107,8 @@ class MenuActivity : AppCompatActivity() {
         if (requestCode == REQUEST_ORDER) {
             if (resultCode == RESULT_OK) {
                 clearQuantities()
-                Toast.makeText(this, "Order Placed!", Toast.LENGTH_SHORT).show()
+            } else if (resultCode == RESULT_FINISH) {
+                finish()
             }
         }
     }
