@@ -51,6 +51,7 @@ import ee.ut.gimmefood.camera.CameraXViewModel
 import ee.ut.gimmefood.camera.GraphicOverlay
 import ee.ut.gimmefood.camera.VisionImageProcessor
 import ee.ut.gimmefood.camera.kotlin.barcodescanner.BarcodeScannerProcessor
+import ee.ut.gimmefood.data.Datastore
 import java.util.*
 import kotlin.reflect.typeOf
 
@@ -370,7 +371,12 @@ class CameraXLivePreviewActivity :
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    var scanned : Boolean = false;
+    var failedBarcodes : MutableList<String> = mutableListOf()
+
     private fun onBarcodeSuccess(barcode: String) {
+        if (scanned || failedBarcodes.contains(barcode)) return;
+        scanned = true;
         Log.i(TAG_SCAN, "barcode: $barcode")
         val barcodeParts = barcode.split(",")
         val restaurantId = barcodeParts[0]
@@ -384,15 +390,23 @@ class CameraXLivePreviewActivity :
         Log.i(TAG_SCAN, "restaurant: $restaurantId, table: $tableNum")
 
         if (restaurantId.isEmpty()) {
-            // TODO: check with firebase also
             Log.e(TAG_SCAN, "Restaurant does not exist")
+            Toast.makeText(this, "Restaurant not found :(", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val menuIntent = Intent(this, MenuActivity::class.java)
-        menuIntent.putExtra("restaurantId", restaurantId)
-        menuIntent.putExtra("tableNum", tableNum)
-        startActivity(menuIntent)
+        Datastore.getInstance().isRestaurantExists(restaurantId) {exists ->
+            if (exists) {
+                val menuIntent = Intent(this, MenuActivity::class.java)
+                menuIntent.putExtra("restaurantId", restaurantId)
+                menuIntent.putExtra("tableNum", tableNum)
+                startActivity(menuIntent)
+            } else {
+                Toast.makeText(this, "Restaurant not found :(", Toast.LENGTH_SHORT).show()
+                failedBarcodes.add(barcode);
+            }
+            scanned = false;
+        }
     }
 
     companion object {
