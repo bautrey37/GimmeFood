@@ -76,4 +76,18 @@ class Datastore {
         Log.i(TAG, order.toString());
         db.getReference("restaurants").child(restaurantId).child("orders").push().setValue(order);
     }
+
+    fun isRestaurantExists(restaurantId: String, callback: (Boolean) -> Unit) {
+        val db = FirebaseDatabase.getInstance();
+        return db.getReference("restaurants").child(restaurantId).addListenerForSingleValueEvent(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                callback(snapshot.exists())
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
 }
