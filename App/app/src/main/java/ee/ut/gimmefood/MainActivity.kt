@@ -18,6 +18,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, CameraXLivePreviewActivity::class.java))
         }
 
+        settings_button.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
