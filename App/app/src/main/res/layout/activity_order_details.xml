@@ -12,7 +12,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/order_details_activity_title"
-        android:textAppearance="?attr/textAppearanceHeadline3" />
+        android:textAlignment="center"
+        android:textAppearance="?attr/textAppearanceHeadline3"
+        android:textColor="@color/primary"
+        android:textSize="30sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/order_recyclerview"
