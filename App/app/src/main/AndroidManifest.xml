@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GimmeFood">
+        <activity android:name=".OrderResult"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,13 +35,11 @@
             android:name=".camera.kotlin.CameraXLivePreviewActivity"
             android:exported="true"
             android:theme="@style/Theme.GimmeFood" />
-
         <activity android:name=".OrderDetailsActivity" />
 
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-
     </application>
 
 </manifest>

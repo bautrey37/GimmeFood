@@ -2,7 +2,7 @@
     <string name="app_name">Gimme Food</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
-    <string name="main_text">Scan QR code to retrieve menu</string>
+    <string name="main_text">GimmeFood</string>
 
     <string name="menu_text">Today\'s menu at</string>
     <string name="button_add">+</string>
@@ -16,5 +16,8 @@
     <string name="order_details_activity_title">My order</string>
     <string name="order_details_order_button_text">ORDER</string>
     <string name="order_details_cancel_button_text">Cancel</string>
-    <string name="restaurant_name">Restaurant Name</string>
+    <string name="restaurant_name"></string>
+    <string name="your_order_is_placed">Your order is placed!</string>
+    <string name="we_will_bring_your_meal_to_your_table_soon">We will bring your meal to your table soon 😉</string>
+    <string name="scan_qr_code_on_the_restaurants_menu">Scan QR code on the restaurants menu</string>
 </resources>

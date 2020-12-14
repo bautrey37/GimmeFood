@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:paddingTop="32dp">
 
     <TextView
         android:id="@+id/header_text"
@@ -11,49 +12,46 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/order_details_activity_title"
-        android:textAppearance="?attr/textAppearanceHeadline3"/>
+        android:textAppearance="?attr/textAppearanceHeadline3" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/order_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layoutManager="LinearLayoutManager"/>
+        app:layoutManager="LinearLayoutManager" />
 
     <TextView
         android:id="@+id/total_textview"
-        android:text="@string/total_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textAppearance="?attr/textAppearanceHeadline5"
         android:layout_margin="@dimen/order_details_total_text_margin"
         android:layout_marginBottom="0dp"
-        />
+        android:gravity="center"
+        android:text="@string/total_text"
+        android:textAppearance="?attr/textAppearanceHeadline5" />
 
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/order_details_cancel_button_text"
             android:layout_margin="@dimen/order_details_bottom_bar_element_margin"
-            />
+            android:layout_weight="1"
+            android:text="@string/order_details_cancel_button_text" />
 
         <Button
             android:id="@+id/order_button"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/order_details_order_button_text"
             android:layout_margin="@dimen/order_details_bottom_bar_element_margin"
-            />
+            android:layout_weight="1"
+            android:text="@string/order_details_order_button_text" />
     </LinearLayout>
 
 </android.widget.LinearLayout>
