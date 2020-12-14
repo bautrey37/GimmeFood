@@ -23,11 +23,15 @@ package ee.ut.gimmefood.camera.kotlin
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -46,6 +50,7 @@ import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
 import ee.ut.gimmefood.MenuActivity
 import ee.ut.gimmefood.R
+import ee.ut.gimmefood.SettingsActivity
 import ee.ut.gimmefood.camera.CameraXViewModel
 import ee.ut.gimmefood.camera.GraphicOverlay
 import ee.ut.gimmefood.camera.VisionImageProcessor
@@ -132,7 +137,23 @@ class CameraXLivePreviewActivity :
         if (!allPermissionsGranted()) {
             runtimePermissions
         }
+        supportActionBar?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setDisplayShowTitleEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
+        }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 
     override fun onSaveInstanceState(bundle: Bundle) {
         super.onSaveInstanceState(bundle)
