@@ -9,10 +9,12 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import ee.ut.gimmefood.data.Datastore
 import ee.ut.gimmefood.data.Food
 import ee.ut.gimmefood.shopping.ShoppingAdapter
 import kotlinx.android.synthetic.main.activity_menu.*
+import kotlinx.android.synthetic.main.food_item_layout.*
 
 class MenuActivity : AppCompatActivity() {
     companion object {
@@ -68,6 +70,11 @@ class MenuActivity : AppCompatActivity() {
             setDisplayShowTitleEnabled(false)
             setDisplayHomeAsUpEnabled(true)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        notifyDataSetChanged()
     }
 
 

@@ -28,6 +28,7 @@ class ShoppingAdapter(
     private val onRemoveClick: (Food) -> Unit
 ) : RecyclerView.Adapter<ShoppingAdapter.ShoppingViewHolder>() {
 
+
     class ShoppingViewHolder(
         private val view: View,
         private val orderQuantities: Map<String, Int>,
@@ -45,15 +46,7 @@ class ShoppingAdapter(
 
 
         fun bind(food: Food) {
-            val prefLargeImages = true
-
-//                PreferenceManager.getDefaultSharedPreferences(view.context)
-//                .getString("big_images", view.context.packageName)
-//            Log.d("debug", "prefLargeImages: $prefLargeImages")
-
             foodTextView.text = food.name
-//            foodImageView.layoutParams.width = largeDimen
-//            foodImageView.layoutParams.height = largeDimen
             foodImageView.setImageBitmap(
                 food.image ?: BlurHashDecoder.decode(
                     food.image_hash,
@@ -79,6 +72,16 @@ class ShoppingAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.food_item_layout, parent, false)
+
+        val prefLargeImages = PreferenceManager.getDefaultSharedPreferences(activity)
+            .getBoolean("big_images", false)
+
+        if (prefLargeImages) {
+            val foodImageView: ImageView = view.findViewById(R.id.food_image)
+            foodImageView.requestLayout()
+            foodImageView.layoutParams.height = 300
+            foodImageView.layoutParams.width = 200
+        }
         return ShoppingViewHolder(view, orderQuantities, onAddClick, onRemoveClick)
     }
 

@@ -18,6 +18,6 @@
     <string name="order_details_cancel_button_text">Cancel</string>
     <string name="restaurant_name"></string>
     <string name="your_order_is_placed">Your order is placed!</string>
-    <string name="we_will_bring_your_meal_to_your_table_soon">We will bring your meal to your table soon 😉</string>
+    <string name="we_will_bring_your_meal_to_your_table_soon">We will bring your meal \n  to your table soon 😉</string>
     <string name="scan_qr_code_on_the_restaurants_menu">Scan QR code on the restaurants menu</string>
 </resources>
