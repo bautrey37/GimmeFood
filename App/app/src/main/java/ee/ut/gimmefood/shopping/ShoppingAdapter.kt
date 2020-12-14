@@ -40,14 +40,20 @@ class ShoppingAdapter(
         private val addButton: Button = view.findViewById(R.id.button_add)
         private val orderQuantityView: TextView = view.findViewById(R.id.food_quantity)
         private val removeButton: Button = view.findViewById(R.id.button_remove)
+        private val dimen = R.dimen.food_item_image_size
+        private val largeDimen = R.dimen.food_item_large_image_size
 
 
         fun bind(food: Food) {
-//            val prefLargeImages = PreferenceManager.getDefaultSharedPreferences(view.context)
+            val prefLargeImages = true
+
+//                PreferenceManager.getDefaultSharedPreferences(view.context)
 //                .getString("big_images", view.context.packageName)
 //            Log.d("debug", "prefLargeImages: $prefLargeImages")
 
             foodTextView.text = food.name
+//            foodImageView.layoutParams.width = largeDimen
+//            foodImageView.layoutParams.height = largeDimen
             foodImageView.setImageBitmap(
                 food.image ?: BlurHashDecoder.decode(
                     food.image_hash,
