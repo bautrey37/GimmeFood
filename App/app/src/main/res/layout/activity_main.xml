@@ -6,24 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/button_scan"
-        android:layout_width="153dp"
-        android:layout_height="98dp"
-        android:text="Scan QR"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan QR code to retrieve menu"
+        android:gravity="center"
+        android:text="@string/main_text"
+        android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/button_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/button_scan"
+        android:layout_width="0dp"
+        android:layout_height="500dp"
+        android:background="#FFFFFF"
+        android:backgroundTint="#FFFFFF"
+        android:contentDescription="qr_scanner_image"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/qr_phone_foreground" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
