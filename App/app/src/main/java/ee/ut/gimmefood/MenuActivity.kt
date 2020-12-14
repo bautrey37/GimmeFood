@@ -107,7 +107,6 @@ class MenuActivity : AppCompatActivity() {
         if (requestCode == REQUEST_ORDER) {
             if (resultCode == RESULT_OK) {
                 clearQuantities()
-                Toast.makeText(this, "Order Placed!", Toast.LENGTH_SHORT).show()
             } else if (resultCode == RESULT_FINISH) {
                 finish()
             }

@@ -15,7 +15,7 @@
         android:text="@string/menu_text"
         android:textAlignment="center"
         android:textAppearance="?attr/textAppearanceHeadline3"
-        android:textSize="24sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
