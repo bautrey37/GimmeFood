@@ -40,7 +40,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.annotation.KeepName
@@ -53,7 +52,6 @@ import ee.ut.gimmefood.camera.VisionImageProcessor
 import ee.ut.gimmefood.camera.kotlin.barcodescanner.BarcodeScannerProcessor
 import ee.ut.gimmefood.data.Datastore
 import java.util.*
-import kotlin.reflect.typeOf
 
 /** Live preview demo app for ML Kit APIs using CameraX.  */
 @KeepName
@@ -225,7 +223,7 @@ class CameraXLivePreviewActivity :
         val targetResolution = targetResolutionSize
         builder.setTargetResolution(targetResolution)
         previewUseCase = builder.build()
-        previewUseCase!!.setSurfaceProvider(previewView!!.getSurfaceProvider())
+        previewUseCase!!.setSurfaceProvider(previewView!!.surfaceProvider)
         cameraProvider!!.bindToLifecycle(/* lifecycleOwner= */this,
             cameraSelector!!,
             previewUseCase
@@ -371,17 +369,18 @@ class CameraXLivePreviewActivity :
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    var scanned : Boolean = false;
-    var failedBarcodes : MutableList<String> = mutableListOf()
+    var scanned: Boolean = false
+    var failedBarcodes: MutableList<String> = mutableListOf()
+    val REQUEST_CODE = 199
 
     private fun onBarcodeSuccess(barcode: String) {
-        if (scanned || failedBarcodes.contains(barcode)) return;
-        scanned = true;
+        if (scanned || failedBarcodes.contains(barcode)) return
+        scanned = true
         Log.i(TAG_SCAN, "barcode: $barcode")
         val barcodeParts = barcode.split(",")
         val restaurantId = barcodeParts[0]
         val tableNum = try {
-             barcodeParts[1].toInt()
+            barcodeParts[1].toInt()
         } catch (e: java.lang.Exception) {
             Log.w(TAG_SCAN, "table number not found in barcode. Exception: ${e.message}")
             -1
@@ -395,17 +394,24 @@ class CameraXLivePreviewActivity :
             return
         }
 
-        Datastore.getInstance().isRestaurantExists(restaurantId) {exists ->
+        Datastore.getInstance().isRestaurantExists(restaurantId) { exists ->
             if (exists) {
                 val menuIntent = Intent(this, MenuActivity::class.java)
                 menuIntent.putExtra("restaurantId", restaurantId)
                 menuIntent.putExtra("tableNum", tableNum)
-                startActivity(menuIntent)
+                startActivityForResult(menuIntent, REQUEST_CODE)
             } else {
                 Toast.makeText(this, "Restaurant not found :(", Toast.LENGTH_SHORT).show()
-                failedBarcodes.add(barcode);
+                failedBarcodes.add(barcode)
             }
-            scanned = false;
+            scanned = false
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE) {
+            finish()
         }
     }
 

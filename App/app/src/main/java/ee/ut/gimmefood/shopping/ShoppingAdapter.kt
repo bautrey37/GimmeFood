@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ee.ut.gimmefood.R
 import ee.ut.gimmefood.blurhash.BlurHashDecoder
+import ee.ut.gimmefood.data.Datastore
 import ee.ut.gimmefood.data.Food
 import java.net.URL
 import kotlin.concurrent.thread
@@ -19,20 +20,17 @@ import kotlin.concurrent.thread
 class ShoppingAdapter(
     var activity: Activity,
     var foodList: List<Food>,
-                      private val orderQuantities: Map<Food, Int>,
-                      private val onAddClick: (Food) -> Unit,
-                      private val onRemoveClick: (Food) -> Unit)
-    : RecyclerView.Adapter<ShoppingAdapter.ShoppingViewHolder>()
-{
+    private val orderQuantities: Map<String, Int>,
+    private val onAddClick: (Food) -> Unit,
+    private val onRemoveClick: (Food) -> Unit
+) : RecyclerView.Adapter<ShoppingAdapter.ShoppingViewHolder>() {
 
-    private val imageCache: MutableMap<String, Bitmap> = mutableMapOf();
-
-    class ShoppingViewHolder(private val view: View,
-                             private val orderQuantities: Map<Food, Int>,
-                             private val onAddClick: (Food) -> Unit,
-                             private val onRemoveClick: (Food) -> Unit)
-        : RecyclerView.ViewHolder(view)
-    {
+    class ShoppingViewHolder(
+        private val view: View,
+        private val orderQuantities: Map<String, Int>,
+        private val onAddClick: (Food) -> Unit,
+        private val onRemoveClick: (Food) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
         private val foodTextView: TextView = view.findViewById(R.id.food_text)
         private val foodImageView: ImageView = view.findViewById(R.id.food_image)
         private val foodPriceView: TextView = view.findViewById(R.id.food_price)
@@ -43,13 +41,19 @@ class ShoppingAdapter(
 
         fun bind(food: Food) {
             foodTextView.text = food.name
-            foodImageView.setImageBitmap(food.image ?: BlurHashDecoder.decode(food.image_hash, 100, 100))
+            foodImageView.setImageBitmap(
+                food.image ?: BlurHashDecoder.decode(
+                    food.image_hash,
+                    100,
+                    100
+                )
+            )
             foodPriceView.text = "${food.price}"
-            addButton.setOnClickListener{ onAddClick(food) }
-            val quantity = orderQuantities.getOrElse(food, {0})
+            addButton.setOnClickListener { onAddClick(food) }
+            val quantity = orderQuantities.getOrElse(food.id, { 0 })
             orderQuantityView.text = "${quantity}"
             removeButton.isEnabled = quantity > 0
-            removeButton.setOnClickListener{ onRemoveClick(food) }
+            removeButton.setOnClickListener { onRemoveClick(food) }
         }
 
         fun bindImage(image: Bitmap?) {
@@ -70,18 +74,20 @@ class ShoppingAdapter(
 
         if (foodList[position].image == null) {
             val imageUrl = foodList[position].image_url
-            if (imageCache.containsKey(imageUrl)) {
-                holder.bindImage(imageCache[imageUrl]);
-            } else {
-                if (imageUrl.isNotEmpty()) {
-                    thread(start=true) {
+
+            if (imageUrl.isNotEmpty()) {
+                Datastore.getInstance().getBitmapFromCache(imageUrl)?.also {
+                    holder.bindImage(it)
+                } ?: run {
+                    thread(start = true) {
                         val url = URL(imageUrl)
-                        val fullBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                        val fullBitmap =
+                            BitmapFactory.decodeStream(url.openConnection().getInputStream())
                         activity.runOnUiThread {
                             holder.bindImage(fullBitmap)
                         }
                         foodList[position].image = fullBitmap
-                        imageCache[imageUrl] = fullBitmap
+                        Datastore.getInstance().addBitmapToCache(imageUrl, fullBitmap)
                     }
                 }
             }

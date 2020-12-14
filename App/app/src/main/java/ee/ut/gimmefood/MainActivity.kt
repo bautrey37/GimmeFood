@@ -1,9 +1,9 @@
 package ee.ut.gimmefood
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import ee.ut.gimmefood.camera.kotlin.CameraXLivePreviewActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
