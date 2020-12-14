@@ -2,6 +2,9 @@
 <resources>
     <dimen name="shoppinglist_footer_element_margin">8dp</dimen>
 
+    <dimen name="title_text">30dp</dimen>
+    <dimen name="sub_title_text">18dp</dimen>
+
     <dimen name="food_item_image_size">48dp</dimen>
     <dimen name="food_item_large_image_size">96dp</dimen>
     <dimen name="food_item_element_margin">8dp</dimen>

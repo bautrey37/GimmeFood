@@ -2,6 +2,9 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
     <SwitchPreferenceCompat
         app:key="big_images"
-        app:title="Enlarge images" />
+        app:title="Enlarge Images" />
 
+<!--    <SwitchPreferenceCompat-->
+<!--        app:key="big_text"-->
+<!--        app:title="Enlarge Text" />-->
 </PreferenceScreen>

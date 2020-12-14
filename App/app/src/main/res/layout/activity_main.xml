@@ -13,7 +13,7 @@
         android:gravity="center"
         android:text="@string/main_text"
         android:textColor="@color/primary"
-        android:textSize="30sp"
+        android:textSize="@dimen/title_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +39,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/scan_qr_code_on_the_restaurants_menu"
         android:textColor="@color/primary"
-        android:textSize="18sp"
+        android:textSize="@dimen/sub_title_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />

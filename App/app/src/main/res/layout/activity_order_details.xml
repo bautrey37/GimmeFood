@@ -14,7 +14,7 @@
         android:textAlignment="center"
         android:textAppearance="?attr/textAppearanceHeadline3"
         android:textColor="@color/primary"
-        android:textSize="30sp" />
+        android:textSize="@dimen/title_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/order_recyclerview"
