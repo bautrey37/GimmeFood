@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="32dp"
     tools:context=".MenuActivity">
 
     <TextView
@@ -47,29 +48,29 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/total_textview"
-            android:text="@string/total_text"
-            android:gravity="center"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/shoppinglist_footer_element_margin"
             android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="@string/total_text"
             android:textAppearance="?attr/textAppearanceHeadline5"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/button_place_order"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/button_place_order"
-            android:enabled="false"
+            android:layout_margin="@dimen/shoppinglist_footer_element_margin"
             android:layout_weight="0.5"
-            android:layout_margin="@dimen/shoppinglist_footer_element_margin" />
+            android:enabled="false"
+            android:text="@string/button_place_order" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

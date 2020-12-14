@@ -45,8 +45,10 @@ class OrderDetailsActivity : AppCompatActivity() {
             Datastore.getInstance().sendOrder(
                 it,
                 tableNum,
-                orderQuantities.map { (id, quantity) -> foods.find { it.id == id }!! to quantity }
-                    .toMap().toMutableMap(),
+                orderQuantities
+                    .map { (id, quantity) -> foods.find { it.id == id }!! to quantity }
+                    .toMap()
+                    .toMutableMap(),
                 getTotalPrice()
             )
             val intent = Intent(this, OrderResult::class.java)
@@ -65,7 +67,9 @@ class OrderDetailsActivity : AppCompatActivity() {
 
 
     private fun generateSummary(): String {
-        return foods.map { "${it.name} x${orderQuantities[it.id]}" }.joinToString("\n")
+        return foods
+            .filter { orderQuantities[it.id] != null }
+            .joinToString("\n") { "${it.name} x${orderQuantities[it.id]}" }
     }
 
     private fun loadIntentData() {
