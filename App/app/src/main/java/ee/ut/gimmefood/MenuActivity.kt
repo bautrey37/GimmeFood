@@ -1,15 +1,20 @@
 package ee.ut.gimmefood
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import ee.ut.gimmefood.data.Datastore
 import ee.ut.gimmefood.data.Food
 import ee.ut.gimmefood.shopping.ShoppingAdapter
 import kotlinx.android.synthetic.main.activity_menu.*
+import kotlinx.android.synthetic.main.food_item_layout.*
 
 class MenuActivity : AppCompatActivity() {
     companion object {
@@ -59,6 +64,38 @@ class MenuActivity : AppCompatActivity() {
 
         restaurantId?.let {
             unsubscribeFromDatastore = datastore.subscribeToRestaraunt(it, this::onDataChange)
+        }
+        supportActionBar?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setDisplayShowTitleEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        notifyDataSetChanged()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.nav_menu, menu)
+        return true
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.your_item_id -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

@@ -3,13 +3,16 @@ package ee.ut.gimmefood.shopping
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import ee.ut.gimmefood.MenuActivity.Companion.TAG
 import ee.ut.gimmefood.R
 import ee.ut.gimmefood.blurhash.BlurHashDecoder
 import ee.ut.gimmefood.data.Datastore
@@ -25,6 +28,7 @@ class ShoppingAdapter(
     private val onRemoveClick: (Food) -> Unit
 ) : RecyclerView.Adapter<ShoppingAdapter.ShoppingViewHolder>() {
 
+
     class ShoppingViewHolder(
         private val view: View,
         private val orderQuantities: Map<String, Int>,
@@ -37,6 +41,8 @@ class ShoppingAdapter(
         private val addButton: Button = view.findViewById(R.id.button_add)
         private val orderQuantityView: TextView = view.findViewById(R.id.food_quantity)
         private val removeButton: Button = view.findViewById(R.id.button_remove)
+        private val dimen = R.dimen.food_item_image_size
+        private val largeDimen = R.dimen.food_item_large_image_size
 
 
         fun bind(food: Food) {
@@ -66,6 +72,16 @@ class ShoppingAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.food_item_layout, parent, false)
+
+        val prefLargeImages = PreferenceManager.getDefaultSharedPreferences(activity)
+            .getBoolean("big_images", false)
+
+        if (prefLargeImages) {
+            val foodImageView: ImageView = view.findViewById(R.id.food_image)
+            foodImageView.requestLayout()
+            foodImageView.layoutParams.height = 300
+            foodImageView.layoutParams.width = 200
+        }
         return ShoppingViewHolder(view, orderQuantities, onAddClick, onRemoveClick)
     }
 
