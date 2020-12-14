@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Gimme Food</string>
 
+    <string name="main_text">Scan QR code to retrieve menu</string>
+
     <string name="menu_text">Today\'s menu at</string>
     <string name="button_add">+</string>
     <string name="button_remove">-</string>
