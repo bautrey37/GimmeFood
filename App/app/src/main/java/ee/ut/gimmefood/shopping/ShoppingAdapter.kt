@@ -3,13 +3,16 @@ package ee.ut.gimmefood.shopping
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import ee.ut.gimmefood.MenuActivity.Companion.TAG
 import ee.ut.gimmefood.R
 import ee.ut.gimmefood.blurhash.BlurHashDecoder
 import ee.ut.gimmefood.data.Datastore
@@ -40,6 +43,10 @@ class ShoppingAdapter(
 
 
         fun bind(food: Food) {
+//            val prefLargeImages = PreferenceManager.getDefaultSharedPreferences(view.context)
+//                .getString("big_images", view.context.packageName)
+//            Log.d("debug", "prefLargeImages: $prefLargeImages")
+
             foodTextView.text = food.name
             foodImageView.setImageBitmap(
                 food.image ?: BlurHashDecoder.decode(
