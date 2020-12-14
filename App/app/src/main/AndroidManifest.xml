@@ -8,7 +8,7 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MenuActivity" />
+
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="barcode" />
@@ -33,7 +34,13 @@
             android:name=".camera.kotlin.CameraXLivePreviewActivity"
             android:exported="true"
             android:theme="@style/Theme.GimmeFood" />
-        <activity android:name=".OrderDetailsActivity"/>
+
+        <activity android:name=".OrderDetailsActivity" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
+
     </application>
 
 </manifest>
