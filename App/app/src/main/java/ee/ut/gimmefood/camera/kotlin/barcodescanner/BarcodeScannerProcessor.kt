@@ -57,7 +57,7 @@ class BarcodeScannerProcessor(context: Context, val onBarcodeSuccess: (String) -
 
     override fun onSuccess(barcodes: List<Barcode>, graphicOverlay: GraphicOverlay) {
         if (barcodes.isEmpty()) {
-            Log.v(MANUAL_TESTING_LOG, "No barcode has been detected")
+            Log.v(TAG_SCAN, "No barcode has been detected")
         }
         for (i in barcodes.indices) {
             val barcode = barcodes[i]
@@ -68,11 +68,12 @@ class BarcodeScannerProcessor(context: Context, val onBarcodeSuccess: (String) -
     }
 
     override fun onFailure(e: Exception) {
-        Log.e(TAG, "Barcode detection failed $e")
+        Log.e(TAG_SCAN, "Barcode detection failed $e")
     }
 
     companion object {
         private const val TAG = "BarcodeProcessor"
+        private const val TAG_SCAN = "BarcodeScanner"
 
         private fun logExtrasForTesting(barcode: Barcode?) {
             if (barcode != null) {
