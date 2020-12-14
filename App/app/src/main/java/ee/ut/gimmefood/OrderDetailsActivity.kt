@@ -6,14 +6,13 @@ import ee.ut.gimmefood.data.Datastore
 import ee.ut.gimmefood.data.Food
 import ee.ut.gimmefood.shopping.ShoppingAdapter
 import kotlinx.android.synthetic.main.activity_order_details.*
-import kotlin.properties.Delegates
 
 class OrderDetailsActivity : AppCompatActivity() {
     lateinit var database: MockDatabase
     lateinit var shoppingAdapter: ShoppingAdapter
-    val orderQuantities = mutableMapOf<Food, Int>()
-    var restaurantId: String? = null
-    var tableNum: Int = -1
+    private val orderQuantities = mutableMapOf<Food, Int>()
+    private var restaurantId: String? = null
+    private var tableNum: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,14 +22,14 @@ class OrderDetailsActivity : AppCompatActivity() {
         loadIntentData()
 
         shoppingAdapter = ShoppingAdapter(this, orderQuantities.keys.toList(),
-                orderQuantities,
-                { food -> changeFoodQuantity(food,  1); },
-                { food -> changeFoodQuantity(food, -1); })
+            orderQuantities,
+            { food -> changeFoodQuantity(food, 1); },
+            { food -> changeFoodQuantity(food, -1); })
 
         order_recyclerview.adapter = shoppingAdapter
 
-        cancel_button.setOnClickListener{ finish() }
-        order_button.setOnClickListener{
+        cancel_button.setOnClickListener { finish() }
+        order_button.setOnClickListener {
             submitOrder()
             setResult(RESULT_OK)
             finish()
@@ -40,7 +39,9 @@ class OrderDetailsActivity : AppCompatActivity() {
     }
 
     private fun submitOrder() {
-        restaurantId?.let { Datastore.getInstance().sendOrder(it, tableNum, orderQuantities, getTotalPrice()) }
+        restaurantId?.let {
+            Datastore.getInstance().sendOrder(it, tableNum, orderQuantities, getTotalPrice())
+        }
     }
 
     private fun loadIntentData() {
@@ -57,7 +58,7 @@ class OrderDetailsActivity : AppCompatActivity() {
     }
 
     private fun changeFoodQuantity(food: Food, changeDelta: Int) {
-        val newQuantity = orderQuantities.getOrElse(food, {0}) + changeDelta
+        val newQuantity = orderQuantities.getOrElse(food, { 0 }) + changeDelta
         if (newQuantity <= 0) {
             orderQuantities.remove(food)
         } else {

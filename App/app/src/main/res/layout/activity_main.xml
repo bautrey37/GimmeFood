@@ -8,8 +8,8 @@
 
     <Button
         android:id="@+id/button_scan"
-        android:layout_width="254dp"
-        android:layout_height="181dp"
+        android:layout_width="153dp"
+        android:layout_height="98dp"
         android:text="Scan QR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

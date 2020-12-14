@@ -21,6 +21,7 @@
 package ee.ut.gimmefood.camera.kotlin
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -30,7 +31,6 @@ import android.util.Size
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -40,16 +40,19 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
+import ee.ut.gimmefood.MenuActivity
 import ee.ut.gimmefood.R
 import ee.ut.gimmefood.camera.CameraXViewModel
 import ee.ut.gimmefood.camera.GraphicOverlay
 import ee.ut.gimmefood.camera.VisionImageProcessor
 import ee.ut.gimmefood.camera.kotlin.barcodescanner.BarcodeScannerProcessor
 import java.util.*
+import kotlin.reflect.typeOf
 
 /** Live preview demo app for ML Kit APIs using CameraX.  */
 @KeepName
@@ -246,7 +249,7 @@ class CameraXLivePreviewActivity :
                         TAG,
                         "Using Barcode Detector Processor"
                     )
-                    BarcodeScannerProcessor(this)
+                    BarcodeScannerProcessor(this, this::onBarcodeSuccess)
                 }
                 else -> throw IllegalStateException("Invalid model name")
             }
@@ -367,8 +370,34 @@ class CameraXLivePreviewActivity :
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    private fun onBarcodeSuccess(barcode: String) {
+        Log.i(TAG_SCAN, "barcode: $barcode")
+        val barcodeParts = barcode.split(",")
+        val restaurantId = barcodeParts[0]
+        val tableNum = try {
+             barcodeParts[1].toInt()
+        } catch (e: java.lang.Exception) {
+            Log.w(TAG_SCAN, "table number not found in barcode. Exception: ${e.message}")
+            -1
+        }
+
+        Log.i(TAG_SCAN, "restaurant: $restaurantId, table: $tableNum")
+
+        if (restaurantId.isEmpty()) {
+            // TODO: check with firebase also
+            Log.e(TAG_SCAN, "Restaurant does not exist")
+            return
+        }
+
+        val menuIntent = Intent(this, MenuActivity::class.java)
+        menuIntent.putExtra("restaurantId", restaurantId)
+        menuIntent.putExtra("tableNum", tableNum)
+        startActivity(menuIntent)
+    }
+
     companion object {
         private const val TAG = "CameraXLivePreview"
+        private const val TAG_SCAN = "BarcodeScanner"
         private const val PERMISSION_REQUESTS = 1
         private const val BARCODE_SCANNING = "Barcode Scanning"
         private const val STATE_SELECTED_MODEL = "selected_model"
