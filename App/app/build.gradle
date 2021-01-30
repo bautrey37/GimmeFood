@@ -52,7 +52,7 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.1.0"
 
     // Barcodes
-    implementation 'com.google.mlkit:barcode-scanning:16.1.0'
+    implementation 'com.google.mlkit:barcode-scanning:16.1.1'
 
     // CameraX
     implementation "androidx.camera:camera-camera2:1.0.0-SNAPSHOT"
@@ -60,7 +60,7 @@ dependencies {
     implementation "androidx.camera:camera-view:1.0.0-SNAPSHOT"
 
     // Test
-    testImplementation 'junit:junit:4.+'
+    testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
@@ -71,5 +71,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx'
 
     // prefs
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
 }
